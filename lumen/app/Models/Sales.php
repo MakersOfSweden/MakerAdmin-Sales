@@ -5,7 +5,8 @@ use DB;
 class Sales extends Entity
 {
 	protected $type = "accounting_transaction";
-	protected $join = "accounting_transaction";
+	protected $table = "accounting_transaction";
+	protected $id_column = "entity_id";
 	protected $columns = [
 		"entity_id" => [
 			"column" => "entity.entity_id",
@@ -86,6 +87,7 @@ class Sales extends Entity
 			"select" => "member.lastname",
 		],
 	];
+	protected $deletable = true;
 	protected $sort = ["accounting_date", "desc"];
 
 	public function _search($query, $search)
