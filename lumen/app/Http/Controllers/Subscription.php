@@ -1,67 +1,59 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-
-use App\Models\Subscription as SubscriptionModel;
-
-use App\Traits\Pagination;
 use App\Traits\EntityStandardFiltering;
 
 class Subscription extends Controller
 {
-	use Pagination, EntityStandardFiltering;
+	use EntityStandardFiltering;
 
 	/**
 	 *
 	 */
-	function list(Request $request)
+	public function list(Request $request)
 	{
-		return $this->_applyStandardFilters("Subscription", $request);
-
-		// Return json array
-		return $result;
+		$params = $request->query->all();
+		return $this->_list("Subscription", $params);
 	}
 
 	/**
 	 *
 	 */
-	function create(Request $request)
+	public function create(Request $request)
 	{
-		return Response()->json([
-			"error" => "Not implemented",
-		], 501);
+		$data = $request->json()->all();
+		return $this->_create("Subscription", $data);
 	}
 
 	/**
 	 *
 	 */
-	function read(Request $request, $id)
+	public function read(Request $request, $subscription_id)
 	{
-		return Response()->json([
-			"error" => "Not implemented",
-		], 501);
+		return $this->_read("Subscription", [
+			"subscription_id" => $subscription_id
+		]);
 	}
 
 	/**
 	 *
 	 */
-	function update(Request $request, $id)
+	public function update(Request $request, $subscription_id)
 	{
-		return Response()->json([
-			"error" => "Not implemented",
-		], 501);
+		$data = $request->json()->all();
+		return $this->_update("Subscription", [
+			"subscription_id" => $subscription_id
+		], $data);
 	}
 
 	/**
 	 *
 	 */
-	function delete(Request $request, $id)
+	public function delete(Request $request, $subscription_id)
 	{
-		return Response()->json([
-			"error" => "Not implemented",
-		], 501);
+		return $this->_delete("Subscription", [
+			"subscription_id" => ["=", $subscription_id]
+		]);
 	}
 }

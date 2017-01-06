@@ -1,140 +1,59 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-
-use App\Models\Product as ProductModel;
-use App\Models\Entity;
-
-use App\Traits\Pagination;
 use App\Traits\EntityStandardFiltering;
 
 class Product extends Controller
 {
-	use Pagination, EntityStandardFiltering;
+	use EntityStandardFiltering;
 
 	/**
 	 *
 	 */
-	function list(Request $request)
+	public function list(Request $request)
 	{
-		return $this->_applyStandardFilters("Product", $request);
+		$params = $request->query->all();
+		return $this->_list("Product", $params);
 	}
 
 	/**
 	 *
 	 */
-	function create(Request $request)
+	public function create(Request $request)
 	{
-		$json = $request->json()->all();
-
-		// Create new product
-		$entity = new ProductModel;
-		$entity->title       = $json["title"]       ?? null;
-		$entity->description = $json["description"] ?? null;
-		$entity->expiry_date = $json["expiry_date"] ?? null;
-		$entity->price       = $json["price"]       ?? null;
-		$entity->auto_extend = $json["auto_extend"] ?? null;
-		$entity->interval    = $json["interval"]    ?? null;
-
-		// Validate input
-		$entity->validate();
-
-		// Save the entity
-		$entity->save();
-
-		// Send response to client
-		return Response()->json([
-			"status" => "created",
-			"entity" => $entity->toArray(),
-		], 201);
+		$data = $request->json()->all();
+		return $this->_create("Product", $data);
 	}
 
 	/**
 	 *
 	 */
-	function read(Request $request, $entity_id)
+	public function read(Request $request, $product_id)
 	{
-		// Load the product
-		$entity = ProductModel::load($entity_id);
-
-		// Generate an error if there is no such product
-		if(false === $entity)
-		{
-			return Response()->json([
-				"message" => "No product with specified product id",
-			], 404);
-		}
-		else
-		{
-			return $entity->toArray();
-		}
+		return $this->_read("Product", [
+			"product_id" => $product_id
+		]);
 	}
 
 	/**
 	 *
 	 */
-	function update(Request $request, $entity_id)
+	public function update(Request $request, $product_id)
 	{
-		// Load the product
-		$entity = ProductModel::load($entity_id);
-
-		// Generate an error if there is no such product
-		if(false === $entity)
-		{
-			return Response()->json([
-				"message" => "No product with specified product id",
-			], 404);
-		}
-
-		$json = $request->json()->all();
-
-		// Create new product
-		// TODO: Put in generic function
-		$entity->title       = $json["title"]       ?? null;
-		$entity->description = $json["description"] ?? null;
-
-		// Validate input
-		$entity->validate();
-
-		// Save the entity
-		$entity->save();
-
-		// TODO: Standarized output
-		return [
-			"status" => "updated",
-			"entity" => $entity->toArray(),
-		];
+		$data = $request->json()->all();
+		return $this->_update("Product", [
+			"product_id" => $product_id
+		], $data);
 	}
 
 	/**
 	 * Delete product
 	 */
-	function delete(Request $request, $entity_id)
+	public function delete(Request $request, $product_id)
 	{
-		$entity = ProductModel::load($entity_id);
-
-		// Generate an error if there is no such product
-		if(false === $entity)
-		{
-			return Response()->json([
-				"message" => "No product with specified product id",
-			], 404);
-		}
-
-		if($entity->delete())
-		{
-			return Response()->json([
-				"status" => "deleted"
-			], 200);
-		}
-		else
-		{
-			return Response()->json([
-				"status" => "error"
-			], 409);
-		}
+		return $this->_delete("Product", [
+			"product_id" => ["=", $product_id]
+		]);
 	}
 }
