@@ -12,7 +12,7 @@
 */
 
 // Sales
-$app->group(array("namespace" => "App\Http\Controllers", "prefix" => "sales"), function() use ($app)
+$app->group(array("prefix" => "sales"), function() use ($app)
 {
 	// Products
 	$app->   get("product",      "Product@list");   // Get collection
